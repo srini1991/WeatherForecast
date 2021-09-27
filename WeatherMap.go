@@ -11,7 +11,6 @@ import (
 	
 	"sync"
 	"time"
-	"Commonfunctions/Common"
 
 	ini "gopkg.in/ini.v1"
 )
@@ -90,7 +89,17 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	if (Weatherresult{}) != clearedcache {
 		fmt.Println("Cache Hit !")
+		convertojson, err := json.Marshal(clearedcache)
+
+		if err != nil {
+			log.Println(convertojson, err)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(convertojson)
+
 		return
+
 	}
 
 	_, err := http.Get(currenturl)
@@ -108,6 +117,16 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	resp, err2 := client.Get(currenturl)
 
 	if err2 != nil {
+		convertojson, err := json.Marshal(cachedweather)
+
+		if err != nil {
+			log.Println(convertojson, err)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(convertojson)
+
+		return
 
 		panic(err2)
 	}
